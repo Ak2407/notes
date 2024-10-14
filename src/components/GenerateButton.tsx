@@ -7,6 +7,7 @@ import axios from "axios";
 import SolutionDialog from "./dialogs/SolutionDialog";
 import { useSolutionDialogStore } from "@/hooks/use-sol";
 import { useState } from "react";
+import { Button } from "./ui/button";
 
 const GenerateButton = () => {
   const onOpen = useSolutionDialogStore((state) => state.onOpen);
@@ -73,15 +74,16 @@ const GenerateButton = () => {
   };
 
   return (
-    <div>
+    <div className="w-full">
       <SolutionDialog open={isOpen} onClose={onClose} text={solution} />
-      <button
+      <Button
         disabled={loading}
-        className="bg-violet-600 text-white p-2 rounded-md hover:opacity-80 transition-all duration-200 ease-in-out"
         onClick={handleClick}
+        variant="outline"
+        className="bg-green-500 hover:bg-green-600 w-full "
       >
         {loading ? "Generating..." : "Generate"}
-      </button>
+      </Button>
     </div>
   );
 };
