@@ -11,8 +11,8 @@ const Navbar = () => {
       <div className="flex items-center justify-center gap-2 h-full w-full lg:w-fit">
         {SocialLinks.map((link, index) => {
           return (
-            <>
-              <a href={link.href} target="_blank" key={index}>
+            <div key={index}>
+              <a href={link.href} target="_blank">
                 <Button
                   variant="link"
                   className="flex items-center justify-center gap-2"
@@ -25,7 +25,7 @@ const Navbar = () => {
               {index < SocialLinks.length - 1 && (
                 <Separator orientation="vertical" />
               )}
-            </>
+            </div>
           );
         })}
       </div>
