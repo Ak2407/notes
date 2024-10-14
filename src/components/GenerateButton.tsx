@@ -2,9 +2,37 @@
 
 import { useEditorContext } from "@/contexts/EditorContext";
 import { exportToBlob } from "tldraw";
+import axios from "axios";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import SolutionDialog from "./dialogs/SolutionDialog";
+import { useSolutionDialogStore } from "@/hooks/use-sol";
+import { useState } from "react";
 
 const GenerateButton = () => {
+  const onOpen = useSolutionDialogStore((state) => state.onOpen);
+  const onClose = useSolutionDialogStore((state) => state.onClose);
+  const isOpen = useSolutionDialogStore((state) => state.isOpen);
+
+  const [solution, setSolution] = useState("");
+
   const { editor } = useEditorContext();
+
+  const blobToBase64 = (blob: Blob): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob); // Convert to Base64
+    });
+  };
 
   const handleClick = async () => {
     if (!editor) {
@@ -26,27 +54,36 @@ const GenerateButton = () => {
         opts: { background: false },
       });
 
-      // Here you would typically send this blob to your AI service
-      // For now, we'll just create a download link as a placeholder
-      const link = document.createElement("a");
-      link.href = window.URL.createObjectURL(blob);
-      link.download = "canvas-export.jpeg";
-      link.click();
+      const img = await blobToBase64(blob);
 
-      alert("Image exported successfully");
+      if (img) {
+        const response = await axios.post("/api/solve", {
+          image: img,
+        });
+
+        if (response) {
+          setSolution(response.data);
+          onOpen();
+        } else {
+          alert("Failed to send image.");
+        }
+      }
     } catch (error) {
-      console.error("Error exporting image:", error);
-      alert("Failed to export image");
+      console.error(error);
+      alert("Failed to generate image at the moment. Try again");
     }
   };
 
   return (
-    <button
-      className="bg-violet-600 text-white p-2 rounded-md hover:opacity-80 transition-all duration-200 ease-in-out"
-      onClick={handleClick}
-    >
-      Generate
-    </button>
+    <div>
+      <SolutionDialog open={isOpen} onClose={onClose} text={solution} />
+      <button
+        className="bg-violet-600 text-white p-2 rounded-md hover:opacity-80 transition-all duration-200 ease-in-out"
+        onClick={handleClick}
+      >
+        Generate
+      </button>
+    </div>
   );
 };
 
