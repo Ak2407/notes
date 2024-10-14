@@ -4,14 +4,6 @@ import { useEditorContext } from "@/contexts/EditorContext";
 import { exportToBlob } from "tldraw";
 import axios from "axios";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import SolutionDialog from "./dialogs/SolutionDialog";
 import { useSolutionDialogStore } from "@/hooks/use-sol";
 import { useState } from "react";
@@ -84,6 +76,7 @@ const GenerateButton = () => {
     <div>
       <SolutionDialog open={isOpen} onClose={onClose} text={solution} />
       <button
+        disabled={loading}
         className="bg-violet-600 text-white p-2 rounded-md hover:opacity-80 transition-all duration-200 ease-in-out"
         onClick={handleClick}
       >
