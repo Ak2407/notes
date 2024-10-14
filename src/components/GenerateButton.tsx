@@ -21,7 +21,8 @@ const GenerateButton = () => {
   const onClose = useSolutionDialogStore((state) => state.onClose);
   const isOpen = useSolutionDialogStore((state) => state.isOpen);
 
-  const [solution, setSolution] = useState("");
+  const [solution, setSolution] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
 
   const { editor } = useEditorContext();
 
@@ -35,6 +36,7 @@ const GenerateButton = () => {
   };
 
   const handleClick = async () => {
+    setLoading(true);
     if (!editor) {
       alert("Editor not ready");
       return;
@@ -64,13 +66,17 @@ const GenerateButton = () => {
         if (response) {
           setSolution(response.data);
           onOpen();
+          setLoading(false);
         } else {
           alert("Failed to send image.");
+
+          setLoading(false);
         }
       }
     } catch (error) {
       console.error(error);
       alert("Failed to generate image at the moment. Try again");
+      setLoading(false);
     }
   };
 
@@ -81,7 +87,7 @@ const GenerateButton = () => {
         className="bg-violet-600 text-white p-2 rounded-md hover:opacity-80 transition-all duration-200 ease-in-out"
         onClick={handleClick}
       >
-        Generate
+        {loading ? "Generating..." : "Generate"}
       </button>
     </div>
   );

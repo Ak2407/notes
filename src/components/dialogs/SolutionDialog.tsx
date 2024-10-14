@@ -12,7 +12,7 @@ type SolutionDialogProps = {
 };
 
 const SolutionDialog = ({ open, onClose, text }: SolutionDialogProps) => {
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState<boolean>(false);
 
   useEffect(() => {
     const checkMobile = () => {
